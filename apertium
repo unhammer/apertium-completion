@@ -1,0 +1,69 @@
+# -*- mode: shell-script; sh-basic-offset: 8; indent-tabs-mode: t -*-
+# ex: ts=8 sw=8 noet filetype=sh
+#
+# apertium completion
+# by Kevin Brubeck Unhammer <unhammer@gmail.com>
+# Licence: GNU GPL v2
+
+_apertium() 
+{
+	local cur prev
+
+	COMPREPLY=()
+	cur=`_get_cword`
+	prev=${COMP_WORDS[COMP_CWORD-1]}
+
+	case "$prev" in
+	    -d)
+		_filedir -d
+		;;
+	    -m)
+		_filedir tmx
+		;;
+	    -f)
+		COMPREPLY=( $( compgen -W 'txt html rtf odt docx wxml \
+		xlsx pptx xpresstag wikimedia' -- $cur ) )
+		;;
+	    -o)
+		COMPREPLY=( $( compgen -W "$(eval apertium -l)" -- $cur ) )
+		;;
+	    *)
+		case "$cur" in
+		    -*)
+			COMPREPLY=( $( compgen -W '-d -f -a -u -m -o -l' -- $cur ) )
+			;;
+		    *)
+			local dirs
+			if [[ "${COMP_WORDS[COMP_CWORD-2]}" == "-d" ]]; then
+				# TODO: should check through all of COMP_WORDS, in case of intervening arguments; also remove possible trailing backslash from -d argument
+				dirs=`ls ${COMP_WORDS[COMP_CWORD-1]}/modes/*.mode | sed 's%.*/%%' | sed 's%\.mode$%%'`
+				COMPREPLY=( $( compgen -W "$dirs" -- $cur ) )
+			else
+				local dirs=$(eval apertium -l)
+				local dirpat=$( echo $dirs | sed 's/ /|/g' )
+				local langset=0
+			        # look through previous words and see if we've
+			        # set the language already
+				for (( i=0; i < ${#COMP_WORDS[@]}-1; i++ ))
+				do
+					if [[ "${COMP_WORDS[i]}" == @($dirpat) ]]; then
+					        # ignore -o-prefixed language code
+						if [[ "${COMP_WORDS[i-1]}" != "-o" ]]; then
+							langset=1
+						fi
+					fi
+				done
+				if [ $langset -eq 1 ]; then
+					_filedir
+				else
+					COMPREPLY=( $( compgen -W "$dirs" -- $cur ) )
+				fi
+			fi
+			;;
+			# direction should only happen once!
+		esac
+	esac
+  
+	return 0
+}
+complete -F _apertium $filenames apertium
