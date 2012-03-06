@@ -21,7 +21,7 @@ _apertium()
 		_filedir tmx
 		;;
 	    -f)
-		COMPREPLY=( $( compgen -W 'txt html rtf odt docx wxml \
+		COMPREPLY=( $( compgen -W 'txt html html-noent rtf odt docx wxml \
 		xlsx pptx xpresstag wikimedia' -- $cur ) )
 		;;
 	    -o)
