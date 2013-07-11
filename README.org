@@ -1,0 +1,26 @@
+If you want "intelligent" bash completion on TAB for [[http://wiki.apertium.org/wiki/Main_Page][apertium]],
+[[http://wiki.apertium.org/wiki/Lttoolbox][lttoolbox]], [[http://wiki.apertium.org/wiki/Vislcg3][vislcg3]] and [[http://wiki.apertium.org/wiki/Hfst][hfst]], do e.g.:
+
+: $ git clone https://github.com/unhammer/apertium-completion.git ~/apertium-completion
+
+and add this to your ~/.bashrc:
+
+#+BEGIN_SRC sh
+  if ! shopt -oq posix && \
+     [[ ( -z "$INSIDE_EMACS" || "$EMACS_BASH_COMPLETE" = "t" ) ]]; then
+      source ~/apertium-completion/completions/*
+  fi
+#+END_SRC
+
+
+Alternatively, if your OS sources files from e.g.
+=/etc/bash_completion_d= automatically, just =sudo cp
+~/apertium-completion/completions/* /etc/bash_completion_d/= (then you
+don't have to add anything to =~/.bashrc=).
+
+
+Now open a new terminal and try typing =apertium= and press TAB twice,
+you should get a list of installed language pairs; =apertium -d .= and
+TAB twice should show you a list of the possible translation modes in
+this directory; etc.
+
