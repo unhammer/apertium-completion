@@ -8,7 +8,9 @@ and add this to your ~/.bashrc:
 #+BEGIN_SRC sh
   if ! shopt -oq posix && \
      [[ ( -z "$INSIDE_EMACS" || "$EMACS_BASH_COMPLETE" = "t" ) ]]; then
-      source ~/apertium-completion/completions/*
+      for f in ~/apertium-completion/completions/*; do
+          [[ -f $f ]] && source "$f"
+      done
   fi
 #+END_SRC
 
