@@ -14,55 +14,69 @@ _apertium()
 
     case "$prev" in
         -d)
-        _filedir -d
-        ;;
+            _filedir -d         # TODO: include . in suggestions?
+            ;;
         -m)
-        _filedir tmx
-        ;;
+            _filedir tmx
+            ;;
         -f)
-        COMPREPLY=( $( compgen -W 'txt html html-noent rtf odt docx wxml \
-        xlsx pptx xpresstag wikimedia' -- $cur ) )
-        ;;
+            COMPREPLY=( $( compgen -W 'txt html html-noent rtf odt docx wxml \
+        xlsx pptx xpresstag mediawiki' -- $cur ) )
+            ;;
         -o)
-        COMPREPLY=( $( compgen -W "$(eval apertium -l)" -- $cur ) )
-        ;;
+            COMPREPLY=( $( compgen -W "$(eval apertium -l)" -- $cur ) )
+            ;;
         *)
-        case "$cur" in
-            -*)
-            COMPREPLY=( $( compgen -W '-d -f -a -u -m -o -l' -- $cur ) )
-            ;;
-            *)
-            local dirs
-            if [[ "${COMP_WORDS[COMP_CWORD-2]}" == "-d" ]]; then
-                # TODO: should check through all of COMP_WORDS, in case of intervening arguments; also remove possible trailing backslash from -d argument
-                dirs=`ls ${COMP_WORDS[COMP_CWORD-1]}/modes/*.mode | sed 's%.*/%%' | sed 's%\.mode$%%'`
-                COMPREPLY=( $( compgen -W "$dirs" -- $cur ) )
-            else
-                local dirs=$(eval apertium -l)
-                local dirpat=$( echo $dirs | sed 's/ /|/g' )
-                local langset=0
-                    # look through previous words and see if we've
-                    # set the language already
-                for (( i=0; i < ${#COMP_WORDS[@]}-1; i++ ))
-                do
-                    if [[ "${COMP_WORDS[i]}" == @($dirpat) ]]; then
-                            # ignore -o-prefixed language code
-                        if [[ "${COMP_WORDS[i-1]}" != "-o" ]]; then
-                            langset=1
+            case "$cur" in
+                -*)
+                    COMPREPLY=( $( compgen -W '-d -f -a -u -m -o -l' -- $cur ) )
+                    ;;
+                *)
+                    # Suggest either translation mode or input/output file
+
+                    local modesdir=""
+                    for (( i=0; i < ${#COMP_WORDS[@]}-1; i++ )); do
+                        if [[ "${COMP_WORDS[i-1]}" = -d ]]; then
+                            modesdir="${COMP_WORDS[i]}"
                         fi
+                    done
+                    if [[ -z "${modesdir}" ]]; then
+                        local apertium_path=$(command -v apertium)
+                        local prefix=${apertium_path%%/bin/apertium}
+                        modesdir=${prefix}/share/apertium
                     fi
-                done
-                if [ $langset -eq 1 ]; then
-                    _filedir
-                else
-                    COMPREPLY=( $( compgen -W "$dirs" -- $cur ) )
-                fi
-            fi
+
+                    declare -a modes
+                    modes=("${modesdir}"/modes/*.mode)
+                    modes=("${modes[@]%%.mode}")
+                    modes=("${modes[@]##*/}")
+
+                    local mode_is_set=false
+                    if [[ -n "${modes[@]}" ]]; then
+                        local modespat=$(printf "%s|" "${modes[@]}")
+                        modespat="${modespat%|}"
+                        # If we've set a mode already, we just want to
+                        # suggest input/output files instead
+                        for (( i=0; i < ${#COMP_WORDS[@]}-1; i++ )); do
+                            if [[ "${COMP_WORDS[i]}" = @($modespat) ]] && [[ "${COMP_WORDS[i-1]}" != "-o" ]]; then
+                                # ignore -o-prefixed language code
+                                mode_is_set=true
+                            fi
+                        done
+                        if $mode_is_set; then
+                            _filedir
+                        else
+                            local m=$(printf "%s\n" "${modes[@]}") # TODO: why is this needed?
+                            COMPREPLY=( $( compgen -W "$m" -- $cur ) )
+                        fi
+                    else
+                        _filedir
+                    fi
+                    ;;
+            esac
             ;;
-            # direction should only happen once!
-        esac
     esac
-  
+    
     return 0
 }
 complete -F _apertium $filenames apertium
