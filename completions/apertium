@@ -9,7 +9,7 @@ _apertium()
     local cur prev
 
     COMPREPLY=()
-    cur=`_get_cword`
+    cur=$(_get_cword)
     prev=${COMP_WORDS[COMP_CWORD-1]}
 
     case "$prev" in
@@ -87,7 +87,7 @@ _apertium_transfer()
     local cur prev
 
     COMPREPLY=()
-    cur=`_get_cword`
+    cur=$(_get_cword)
     first=${COMP_WORDS[1]}    # TODO go through all dash-options
 
     case "$first" in
@@ -123,7 +123,7 @@ _apertium_interchunk()
     local cur
 
     COMPREPLY=()
-    cur=`_get_cword`
+    cur=$(_get_cword)
 
     case "$cur" in
         *)
@@ -147,7 +147,7 @@ _apertium_postchunk()
     local cur
 
     COMPREPLY=()
-    cur=`_get_cword`
+    cur=$(_get_cword)
 
     case "$cur" in
         *)
@@ -166,3 +166,37 @@ _apertium_postchunk()
 complete -F _apertium_transfer $filenames apertium-postchunk
 complete -F _apertium_transfer $filenames apertium-postchunk-j
 
+_apertium_autogen() 
+{
+    local cur
+
+    COMPREPLY=()
+    cur=$(_get_cword)
+
+    case "$cur" in
+        -*)
+            if grep -q -s 'AP_CHECK_LING(' configure.ac; then
+                dirs=$(
+                    awk -F'[][]' '/^ *AP_CHECK_LING\(/ && $2 && $4 {print $2" ../"$4;print $2" ../../languages/"$4}' configure.ac |
+                    while read -r n d; do
+                        test -d "$d" && echo "--with-lang$n=$d";
+                    done
+                )
+                if test -z "$dirs"; then
+                    dirs=$(
+                        awk -F'[][]' '/^ *AP_CHECK_LING\(/ && $2 && $4 {print "--with-lang"$2"=/PATH/TO/"$4}' configure.ac
+                    )
+                fi
+                COMPREPLY=( $( compgen -W "$dirs" -- $cur ) )
+            else
+                _filedir
+            fi
+            ;;
+        *)
+            _filedir
+            ;;
+    esac
+    
+    return 0
+}
+complete -F _apertium_autogen $filenames autogen.sh
