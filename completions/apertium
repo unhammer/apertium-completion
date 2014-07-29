@@ -177,16 +177,17 @@ _apertium_autogen()
         -*)
             if grep -q -s 'AP_CHECK_LING(' configure.ac; then
                 dirs=$(
-                    awk -F'[][]' '/^ *AP_CHECK_LING\(/ && $2 && $4 {print $2" ../"$4;print $2" ../../languages/"$4}' configure.ac |
+                    awk -F'[][]' '/^ *AP_CHECK_LING\(/ && $2 && $4 {print $2, $4}' configure.ac |
                     while read -r n d; do
-                        test -d "$d" && echo "--with-lang$n=$d";
+                        if [[ -d "../$d" ]]; then
+                            echo "--with-lang$n=../$d"
+                        elif [[ -d "../../languages/$d" ]]; then
+                            echo "--with-lang$n=../../languages/$d"
+                        else
+                            echo "--with-lang$n=/PATH/TO/$d"
+                        fi
                     done
                 )
-                if test -z "$dirs"; then
-                    dirs=$(
-                        awk -F'[][]' '/^ *AP_CHECK_LING\(/ && $2 && $4 {print "--with-lang"$2"=/PATH/TO/"$4}' configure.ac
-                    )
-                fi
                 COMPREPLY=( $( compgen -W "$dirs" -- $cur ) )
             else
                 _filedir
