@@ -183,6 +183,8 @@ _apertium_autogen()
                             echo "--with-lang$n=../$d"
                         elif [[ -d "../../languages/$d" ]]; then
                             echo "--with-lang$n=../../languages/$d"
+                        elif [[ -n $GTCORE && $d = giella-* && -d "$GTCORE/../langs/${d##giella-}/tools/mt/apertium" ]]; then
+                            echo "--with-lang$n=$GTCORE/../langs/${d##giella-}/tools/mt/apertium"
                         else
                             echo "--with-lang$n=/PATH/TO/$d"
                         fi
