@@ -53,14 +53,14 @@ _apertium()
 
                     local mode_is_set=false
                     if [[ -n "${modes[@]}" ]]; then
-                        local modespat=$(printf "%s|" "${modes[@]}")
-                        modespat="${modespat%|}"
                         # If we've set a mode already, we just want to
                         # suggest input/output files instead
                         for (( i=0; i < ${#COMP_WORDS[@]}-1; i++ )); do
-                            if [[ "${COMP_WORDS[i]}" = @($modespat) ]] && [[ "${COMP_WORDS[i-1]}" != "-o" ]]; then
-                                # ignore -o-prefixed language code
-                                mode_is_set=true
+                            # ignore -o-prefixed language code
+                            if [[ "${COMP_WORDS[i-1]}" != "-o" ]]; then
+                                for m in "${modes[@]}"; do
+                                    [[ "$m" = "${COMP_WORDS[i]}" ]] && mode_is_set=true; 
+                                done
                             fi
                         done
                         if $mode_is_set; then
