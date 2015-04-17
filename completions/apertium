@@ -4,7 +4,7 @@
 # by Kevin Brubeck Unhammer <unhammer@fsfe.org>
 # Licence: GNU GPL v2
 
-_apertium() 
+_apertium()
 {
     local cur prev
 
@@ -29,7 +29,7 @@ _apertium()
         *)
             case "$cur" in
                 -*)
-                    COMPREPLY=( $( compgen -W '-d -f -a -u -m -o -l' -- $cur ) )
+                    COMPREPLY=( $( compgen -W '-d -f -a -u -n -m -o -l' -- $cur ) )
                     ;;
                 *)
                     # Suggest either translation mode or input/output file
@@ -59,7 +59,7 @@ _apertium()
                             # ignore -o-prefixed language code
                             if [[ "${COMP_WORDS[i-1]}" != "-o" ]]; then
                                 for m in "${modes[@]}"; do
-                                    [[ "$m" = "${COMP_WORDS[i]}" ]] && mode_is_set=true; 
+                                    [[ "$m" = "${COMP_WORDS[i]}" ]] && mode_is_set=true;
                                 done
                             fi
                         done
@@ -76,13 +76,13 @@ _apertium()
             esac
             ;;
     esac
-    
+
     return 0
 }
 complete -F _apertium $filenames apertium
 complete -F _apertium $filenames apertium-j
 
-_apertium_transfer() 
+_apertium_transfer()
 {
     local cur prev
 
@@ -112,13 +112,13 @@ _apertium_transfer()
         fi
         ;;
     esac
-  
+
     return 0
 }
 complete -F _apertium_transfer $filenames apertium-transfer
 complete -F _apertium_transfer $filenames apertium-transfer-j
 
-_apertium_interchunk() 
+_apertium_interchunk()
 {
     local cur
 
@@ -136,13 +136,13 @@ _apertium_interchunk()
         fi
         ;;
     esac
-  
+
     return 0
 }
 complete -F _apertium_transfer $filenames apertium-interchunk
 complete -F _apertium_transfer $filenames apertium-interchunk-j
 
-_apertium_postchunk() 
+_apertium_postchunk()
 {
     local cur
 
@@ -160,13 +160,13 @@ _apertium_postchunk()
         fi
         ;;
     esac
-  
+
     return 0
 }
 complete -F _apertium_transfer $filenames apertium-postchunk
 complete -F _apertium_transfer $filenames apertium-postchunk-j
 
-_apertium_autogen() 
+_apertium_autogen()
 {
     local cur
 
@@ -199,7 +199,7 @@ _apertium_autogen()
             _filedir
             ;;
     esac
-    
+
     return 0
 }
 complete -F _apertium_autogen $filenames autogen.sh
