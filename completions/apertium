@@ -177,7 +177,7 @@ _apertium_autogen()
         -*)
             if grep -q -s 'AP_CHECK_LING(' configure.ac; then
                 dirs=$(
-                    awk -F'[][]' '/^ *AP_CHECK_LING\(/ && $2 && $4 {print $2, $4}' configure.ac |
+                    awk -F'[][[:space:]]+' '/^ *AP_CHECK_LING\(/ && $2 && $4 {print $2, $4}' configure.ac |
                     while read -r n d; do
                         if [[ -d "../$d" ]]; then
                             echo "--with-lang$n=../$d"
