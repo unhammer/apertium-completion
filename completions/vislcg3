@@ -37,6 +37,7 @@ _vislcg3()
 --help
 --?
 --version
+--min-binary-revision
 --grammar
 --grammar-out
 --grammar-bin
@@ -48,6 +49,7 @@ _vislcg3()
 --rule
 --debug
 --verbose
+--quiet
 --vislcg-compat
 --stdin
 --stdout
@@ -56,10 +58,6 @@ _vislcg3()
 --codepage-grammar
 --codepage-input
 --codepage-output
---locale-all
---locale-grammar
---locale-input
---locale-output
 --no-mappings
 --no-corrections
 --no-before-sections
@@ -69,6 +67,7 @@ _vislcg3()
 --trace-name-only
 --trace-no-removed
 --trace-encl
+--dry-run
 --single-run
 --max-runs
 --statistics
@@ -76,19 +75,21 @@ _vislcg3()
 --optimize-safe
 --prefix
 --unicode-tags
+--unique-tags
 --num-windows
 --always-span
 --soft-limit
 --hard-limit
 --dep-delimit
---dep-humanize
 --dep-original
 --dep-allow-loops
 --dep-no-crossing
 --no-magic-readings
 --no-pass-origin
+--split-mappings
 --show-end-tags
 --show-unused-sets
+--show-tags
 --show-tag-hashes
 --show-set-hashes
 '
