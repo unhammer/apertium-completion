@@ -22,30 +22,26 @@ _vislcg3()
 -O
 -E
 -C
--L
 -t
 -S
 -Z
 -z
 -p
--D
--o
--e
 '
 
-    local longoptions='
---help
---?
---version
---min-binary-revision
---grammar
---grammar-out
---grammar-bin
---grammar-only
---ordered
---unsafe
---sections
---rules
+      local longoptions='
+  --help
+  --?
+  --version
+  --min-binary-revision
+-D--grammar
+  --grammar-out
+  --grammar-bin
+  --grammar-only
+  --ordered
+-o--unsafe
+  --sections
+-e--rules
 --rule
 --debug
 --verbose
@@ -276,12 +272,17 @@ _cg_conv()
 -?
 -p
 -u
--v
+-c
 -n
 -a
--m
 -f
 -p
+-C
+-A
+-N
+-P
+-W
+-S
 -r
 -l
 '
@@ -293,13 +294,17 @@ _cg_conv()
 --in-cg
 --in-niceline
 --in-apertium
---in-matxin
 --in-fst
 --in-plain
 --out-cg
 --out-apertium
---out-matxin
+--out-niceline
+--out-plain
+--wfactor
+--wtag
+--sub-delim
 --rtl
+--ltr
 --ltr
 '
 
