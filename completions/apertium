@@ -14,22 +14,22 @@ _apertium()
 
     case "$prev" in
         -d)
-            _filedir -d         # TODO: include . in suggestions?
+            _filedir -d
+            COMPREPLY+=( . )
             ;;
         -m)
             _filedir tmx
             ;;
         -f)
-            COMPREPLY=( $( compgen -W 'txt html html-noent rtf odt docx wxml \
-        xlsx pptx xpresstag mediawiki' -- $cur ) )
+            COMPREPLY=( $( compgen -W 'txt html html-noent rtf odt docx wxml xlsx pptx xpresstag mediawiki' -- "$cur" ) )
             ;;
         -o)
-            COMPREPLY=( $( compgen -W "$(eval apertium -l)" -- $cur ) )
+            COMPREPLY=( $( compgen -W "$(eval apertium -l)" -- "$cur" ) )
             ;;
         *)
             case "$cur" in
                 -*)
-                    COMPREPLY=( $( compgen -W '-d -f -a -u -n -m -o -l' -- $cur ) )
+                    COMPREPLY=( $( compgen -W '-d -f -a -u -n -m -o -l' -- "$cur" ) )
                     ;;
                 *)
                     # Suggest either translation mode or input/output file
@@ -38,11 +38,14 @@ _apertium()
                     for (( i=0; i < ${#COMP_WORDS[@]}-1; i++ )); do
                         if [[ "${COMP_WORDS[i-1]}" = -d ]]; then
                             modesdir="${COMP_WORDS[i]}"
+                        elif [[ "${COMP_WORDS[i]}" = -d* ]]; then
+                            modesdir="${COMP_WORDS[i]##-d}"
                         fi
                     done
                     if [[ -z "${modesdir}" ]]; then
-                        local apertium_path=$(command -v apertium)
-                        local prefix=${apertium_path%%/bin/apertium}
+                        local apertium_path prefix
+                        apertium_path=$(command -v apertium)
+                        prefix=${apertium_path%%/bin/apertium}
                         modesdir=${prefix}/share/apertium
                     fi
 
@@ -66,8 +69,9 @@ _apertium()
                         if $mode_is_set; then
                             _filedir
                         else
-                            local m=$(printf "%s\n" "${modes[@]}") # TODO: why is this needed?
-                            COMPREPLY=( $( compgen -W "$m" -- $cur ) )
+                            local m
+                            m=$(printf "%s\n" "${modes[@]}") # TODO: why is this needed?
+                            COMPREPLY=( $( compgen -W "$m" -- "$cur" ) )
                         fi
                     else
                         _filedir
@@ -79,8 +83,8 @@ _apertium()
 
     return 0
 }
-complete -F _apertium $filenames apertium
-complete -F _apertium $filenames apertium-j
+complete -F _apertium "$filenames" apertium
+complete -F _apertium "$filenames" apertium-j
 
 _apertium_transfer()
 {
@@ -92,20 +96,20 @@ _apertium_transfer()
 
     case "$first" in
         -b)
-        if [ $COMP_CWORD -eq 2 ]; then
+        if [[ $COMP_CWORD -eq 2 ]]; then
             _filedir t1x
-        elif [ $COMP_CWORD -eq 3 ]; then
+        elif [[ $COMP_CWORD -eq 3 ]]; then
             _filedir t1x.bin
         else
             _filedir
         fi
         ;;
         *)
-        if [ $COMP_CWORD -eq 1 ]; then
+        if [[ $COMP_CWORD -eq 1 ]]; then
             _filedir t1x
-        elif [ $COMP_CWORD -eq 2 ]; then
+        elif [[ $COMP_CWORD -eq 2 ]]; then
             _filedir t1x.bin
-        elif [ $COMP_CWORD -eq 3 ]; then
+        elif [[ $COMP_CWORD -eq 3 ]]; then
             _filedir autobil.bin
         else
             _filedir
@@ -115,8 +119,8 @@ _apertium_transfer()
 
     return 0
 }
-complete -F _apertium_transfer $filenames apertium-transfer
-complete -F _apertium_transfer $filenames apertium-transfer-j
+complete -F _apertium_transfer "$filenames" apertium-transfer
+complete -F _apertium_transfer "$filenames" apertium-transfer-j
 
 _apertium_interchunk()
 {
@@ -127,9 +131,9 @@ _apertium_interchunk()
 
     case "$cur" in
         *)
-        if [ $COMP_CWORD -eq 1 ]; then
+        if [[ $COMP_CWORD -eq 1 ]]; then
             _filedir t2x
-        elif [ $COMP_CWORD -eq 2 ]; then
+        elif [[ $COMP_CWORD -eq 2 ]]; then
             _filedir t2x.bin
         else
             _filedir
@@ -139,8 +143,8 @@ _apertium_interchunk()
 
     return 0
 }
-complete -F _apertium_transfer $filenames apertium-interchunk
-complete -F _apertium_transfer $filenames apertium-interchunk-j
+complete -F _apertium_transfer "$filenames" apertium-interchunk
+complete -F _apertium_transfer "$filenames" apertium-interchunk-j
 
 _apertium_postchunk()
 {
@@ -151,9 +155,9 @@ _apertium_postchunk()
 
     case "$cur" in
         *)
-        if [ $COMP_CWORD -eq 1 ]; then
+        if [[ $COMP_CWORD -eq 1 ]]; then
             _filedir t3x
-        elif [ $COMP_CWORD -eq 2 ]; then
+        elif [[ $COMP_CWORD -eq 2 ]]; then
             _filedir t3x.bin
         else
             _filedir
@@ -163,8 +167,8 @@ _apertium_postchunk()
 
     return 0
 }
-complete -F _apertium_transfer $filenames apertium-postchunk
-complete -F _apertium_transfer $filenames apertium-postchunk-j
+complete -F _apertium_transfer "$filenames" apertium-postchunk
+complete -F _apertium_transfer "$filenames" apertium-postchunk-j
 
 _apertium_autogen()
 {
@@ -190,7 +194,7 @@ _apertium_autogen()
                         fi
                     done
                 )
-                COMPREPLY=( $( compgen -W "$dirs" -- $cur ) )
+                COMPREPLY=( $( compgen -W "$dirs" -- "$cur" ) )
             else
                 _filedir
             fi
@@ -202,4 +206,4 @@ _apertium_autogen()
 
     return 0
 }
-complete -F _apertium_autogen $filenames autogen.sh
+complete -F _apertium_autogen "$filenames" autogen.sh
