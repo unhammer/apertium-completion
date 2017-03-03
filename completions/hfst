@@ -6,38 +6,75 @@
 
 # TODO: the rest of the hfst applications, and use $prev in _hfst-lookup
 
-_hfst-lookup() 
+_hfst-lookup()
 {
     local cur
 
     COMPREPLY=()
-    cur=`_get_cword`
+    cur=$(_get_cword)
 
     case "$cur" in
         -*)
-            COMPREPLY=( $( compgen -W '-h --help \
-  -V --version \
-  -v --verbose \
-  -q --quiet \
-  -s --silent \
-  -i --input \
-  -o --output \
-  -R --read-symbols \
-  -D --do-not-write-symbols \
-  -W --write-symbols-to \
-  -I --input-strings \
-  -S --spaces \
-  -f --format \
-  -r --statistics' -- $cur ) )
+            COMPREPLY=( $( compgen -W '-h --help
+  -V --version
+  -v --verbose
+  -q --quiet
+  -s --silent
+  -i --input
+  -o --output
+  -R --read-symbols
+  -D --do-not-write-symbols
+  -W --write-symbols-to
+  -I --input-strings
+  -S --spaces
+  -f --format
+  -r --statistics' -- "$cur" ) )
             ;;
-        
-
 
         *)
-            _filedir hfst
+            _filedir
             ;;
     esac
-    
+
     return 0
 }
-complete -F _hfst-lookup $filenames hfst-lookup
+complete -F _hfst-lookup "$filenames" hfst-lookup
+
+_hfst-tokenize()
+{
+    local cur
+
+    COMPREPLY=()
+    cur=$(_get_cword)
+
+    case "$cur" in
+        -*)
+            COMPREPLY=( $( compgen -W '-h --help
+  -V --version
+  -v --verbose
+  -q --quiet
+  -s --silent
+  -n --newline
+  -a --print-all
+  -w --print-weight
+  -m --tokenize-multichar
+  -t --time-cutoff
+  -l --weight-classes
+  -u --unique
+  -z --segment
+  -x --xerox
+  -c --cg
+  -g --giella-cg
+  -C --conllu
+  -f --finnpos' -- "$cur" ) )
+            ;;
+
+        *)
+            _filedir pmhfst
+            ;;
+    esac
+
+    return 0
+}
+complete -F _hfst-tokenize "$filenames" hfst-tokenize
+complete -F _hfst-tokenize "$filenames" hfst-tokenise
