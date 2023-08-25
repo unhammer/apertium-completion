@@ -21,7 +21,7 @@ _apertium()
             _filedir tmx
             ;;
         -f)
-            COMPREPLY=( $( compgen -W 'txt html html-noent rtf odt docx wxml xlsx pptx xpresstag mediawiki' -- "$cur" ) )
+            COMPREPLY=( $( compgen -W 'txt html html-noent html-alt rtf odt docx wxml xlsx pptx xpresstag mediawiki' -- "$cur" ) )
             ;;
         -o)
             COMPREPLY=( $( compgen -W "$(eval apertium -l)" -- "$cur" ) )
