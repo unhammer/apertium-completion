@@ -207,3 +207,67 @@ _apertium_autogen()
     return 0
 }
 complete -F _apertium_autogen "$filenames" autogen.sh
+
+
+_apertium_rtx_proc()
+{
+    local cur
+
+    COMPREPLY=()
+    cur=$(_get_cword)
+
+    options='-a --anaphora                       \
+             -b --both                           \
+             -e --everything                     \
+             -f --filter                         \
+             -F --filter                         \
+             -m --mode                           \
+             -r --rules                          \
+             -s --steps                          \
+             -t --trx                            \
+             -T --tree                           \
+             -z --null-flush                     \
+             -h --help'
+
+    case "$cur" in
+        -*)
+            COMPREPLY=( $( compgen -W "${options}" -- $cur ) )
+            ;;
+        *)
+            _filedir rtx.bin
+            ;;
+    esac
+
+    return 0
+}
+complete -F _apertium_rtx_proc "$filenames" rtx-proc
+
+_apertium_rtx_comp()
+{
+    local cur
+
+    COMPREPLY=()
+    cur=$(_get_cword)
+
+    options=' -e --exclude
+              -l --lexical
+              -s --summarize
+              -S --stats
+              -h --help'
+
+    case "$cur" in
+        -*)
+            COMPREPLY=( $( compgen -W "${options}" -- $cur ) )
+            ;;
+        *)
+            if [[ $COMP_CWORD -gt 1 && ${COMP_WORDS[$COMP_CWORD-1]} != -* ]]; then
+                _filedir rtx.bin
+            else
+                _filedir rtx
+            fi
+            ;;
+    esac
+
+    return 0
+}
+complete -F _apertium_rtx_comp "$filenames" rtx-comp
